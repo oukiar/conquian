@@ -23,11 +23,48 @@ import os
 
 import json
 
-from widget3D import Widget3D, Image3D, rotatingPoints
+from devslib.widget3D import Widget3D, Image3D, rotatingPoints
 
-from utils import *
+from devslib.utils import *
 
-from listbox import ListBox
+from devslib.listbox import ListBox
+
+from functools import partial
+
+#parse stuff
+from parse_rest.connection import register, ParseBatcher
+from parse_rest.datatypes import Object
+from parse_rest.user import User
+
+
+#parse initialization
+register("D75yTmAfqHv8Zblpvq3vQ8Nb68RTq8yCJhynyIt1", "ce28KxuesyTf2X3pxzkyHj2QZfSuWRwo9c2NjuQv")
+
+Partidas = Object.factory("Partidas")
+Chat = Object.factory("Chat")
+
+from threading import Thread
+from time import sleep
+
+'''
+Partidas:
+- Un usuario solo puede crear una partida en un determinado momento
+-
+'''
+
+class PartidasThread(Thread):
+     def __init__(self, **kwargs):
+         self.callback = kwargs.pop('callback')
+         self.stop = False
+         super(PartidasThread, self).__init__()
+
+     def run(self):
+         while self.stop == False:
+             sleep(5)
+             print 'Obteniendo partidas'
+             partidas = Partidas.Query.all()
+             Clock.schedule_once(partial(self.callback, partidas), 0)
+
 
 class CrearPartida(Popup):
     
@@ -46,6 +83,15 @@ class CrearPartida(Popup):
         self.btn_aceptar = Button(text='Aceptar')
         self.content.add_widget(self.btn_aceptar)
 
+class Login(AnchorLayout):
+    nickname = ObjectProperty()
+    message = ObjectProperty()
+
+class Menu(BoxLayout):
+    lst_partidas = ObjectProperty()
+
+class Game(BoxLayout):
+    pass
 
 class Conquian(FloatLayout):
     
@@ -62,6 +108,7 @@ class Conquian(FloatLayout):
     
     state = StringProperty()
     nick = StringProperty()
+    login = ObjectProperty()
 
     
     def __init__(self, **kwargs):
@@ -77,13 +124,14 @@ class Conquian(FloatLayout):
             self.devID = '-1'
             
         self.server = 'http://www.devsinc.com.mx'
-        
-        
+
+
+        '''
         Request(action=self.server + '/conquian/signin.php', 
                     callback=self.on_sign, 
                     data=urllib.urlencode({'devID':self.devID})
                     )
-        
+        '''
         
     def on_sign(self, res):
         
@@ -332,8 +380,50 @@ class Conquian(FloatLayout):
         self.remove_widget(self.lay_up)
         self.remove_widget(self.lay_rightbottom)
 
+    def do_login(self):
+        print 'login'
+
+        try:
+            usr = User.signup(self.login.nickname.text, "12345", nickname=self.login.nickname.text)
+            self.remove_widget(self.login)
+
+            self.menu = Menu()
+            self.add_widget(self.menu)
+
+            #self.getpartidas = PartidasThread(callback=self.actualizar_partidas)
+            #self.getpartidas.start()
+
+        except:
+            self.login.message.text = 'Nickname already in use'
+
+    def crear_partida(self):
+
+        mypartidas = Partidas.Query.filter(Creator__in=[self.login.nickname.text])
+
+        if len(mypartidas) > 0:
+            print "YA hay partida creada"
+            return
+
+        partida = Partidas()
+        partida.Creator = self.login.nickname.text
+        partida.save()
+
+        #self.actualizar_partidas()
+
+    def actualizar_partidas(self, partidas, dt):
+        self.menu.lst_partidas.clear()
+
+        #partidas = Partidas.Query.all()
+
+        for i in partidas:
+            print i
+            label = Label(text=i.Creator, height=40)
+            self.menu.lst_partidas.add_widget(label)
+
+
+
 if __name__ == '__main__':
-    from kivy.base import runTouchApp
+    #from kivy.base import runTouchApp
 
 
     '''
@@ -352,5 +442,16 @@ if __name__ == '__main__':
         img2.save(os.path.join('cartas', carta) )
     '''
     
-    runTouchApp(Conquian() )
+    #runTouchApp(Conquian() )
+
+    from kivy.app import App
+
+
+    class ConquianApp(App):
+        def build(self):
+            return Conquian()
+
+    conquian = ConquianApp()
+    conquian.run()
+    conquian.root.getpartidas.stop = True
     

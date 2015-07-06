@@ -1,0 +1,114 @@
+
+
+#:import ScrollBox devslib.scrollbox
+#:import Loading devslib.widget3D
+
+<Game>:
+    BoxLayout:
+        size_hint_y: None
+        Button:
+            text: "Abandonar juego"
+        Button:
+            text: "Ofrecer tablas"
+
+        Button:
+            text: "Pagar por ver"
+
+
+
+<Menu>:
+    lst_partidas:lst_partidas
+    Bubble:
+        size_hint_x: None
+        width: 200
+        Accordion:
+            orientation: "vertical"
+            AccordionItem:
+                title: "Partidas"
+                collapse: True
+                BoxLayout:
+                    orientation: 'vertical'
+                    padding: 10
+                    spacing: 10
+                    Button:
+                        text: "Iniciar juego"
+                        border: (10,10,10,10)
+                        size_hint_y: None
+                    Button:
+                        text: "Crear partida"
+                        size_hint_y: None
+                        on_press: app.root.crear_partida()
+                    Label:
+                        text: "Partidas disponibles"
+                        size_hint_y: None
+                        height: 40
+                    ScrollBox:
+                        id: lst_partidas
+                        orientation: 'vertical'
+                        canvas.before:
+                            Color:
+                                rgba: (.9, 0.9, 0.9, .5)
+                            Rectangle:
+                                pos: self.pos
+                                size: self.size
+            AccordionItem:
+                title: "Chat"
+            AccordionItem:
+                title: "Comunidad"
+
+    Game:
+
+<Login>:
+    nickname: nickname
+    message: message
+    anchor_y: 'center'
+    anchor_x: 'center'
+    Bubble:
+        size_hint: (None,None)
+        size: (400,350)
+    BoxLayout:
+        nickname: nickname
+        orientation: "vertical"
+        size_hint: (None,None)
+        size: (400,350)
+        padding: 20
+        spacing: 15
+        Label:
+            text: "Nickname"
+            font_size: 20
+        TextInput:
+            id: nickname
+            size_hint_y: None
+            height: 40
+        Label:
+            id: message
+            text: ""
+            size_hint_y: None
+            height: 40
+            color: (1,.2,.2,1)
+        AnchorLayout:
+            anchor_x: 'center'
+
+            Button:
+                background_normal: 'blank.jpg'
+                background_color: (.8,.8,1,1)
+                background_down: 'blank.jpg'
+                color: (0,0,0, 1)
+                text: 'Entrar'
+                size_hint_x: None
+                width: 200
+                on_press: app.root.do_login()
+                border: (10,10,10,10)
+
+<Conquian>:
+    login: login
+    Image:
+        opacity: .5
+        source: "background.jpg"
+    Login:
+        id: login
+
+
+    Loading:
+        source: 'oros.png'
+        duration: 15
