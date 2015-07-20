@@ -14,10 +14,29 @@
         Button:
             text: "Pagar por ver"
 
+<CharMsg>:
+    text_size: root.width, None
+    size: self.texture_size
 
+<Chat@AccordionItem>:
+    messages:messages
+    title: "Chat"
+    BoxLayout:
+        orientation: "vertical"
+        ScrollBox:
+            id: messages
+            orientation: "vertical"
+        TextInput:
+            text: ""
+            size_hint_y: None
+            height: 50
+            hint_text: "Write message"
+            multiline: False
+            on_text_validate: app.root.postMessage(self)
 
-<Menu>:
+<Principal>:
     lst_partidas:lst_partidas
+    chat:chat
     Bubble:
         size_hint_x: None
         width: 200
@@ -51,8 +70,9 @@
                             Rectangle:
                                 pos: self.pos
                                 size: self.size
-            AccordionItem:
-                title: "Chat"
+
+            Chat:
+                id: chat
             AccordionItem:
                 title: "Comunidad"
 
@@ -66,6 +86,7 @@
     Bubble:
         size_hint: (None,None)
         size: (400,350)
+        background_color: (1,1,1,.5)
     BoxLayout:
         nickname: nickname
         orientation: "vertical"
@@ -110,5 +131,7 @@
 
 
     Loading:
-        source: 'oros.png'
-        duration: 15
+        source: 'oros48.png'
+        duration: 3
+        pos_z: -200
+        opacity: 0

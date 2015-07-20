@@ -12,6 +12,7 @@ from kivy.uix.anchorlayout import AnchorLayout
 from kivy.uix.scatter import Scatter
 from kivy.uix.image import Image
 from kivy.uix.button import Button
+from kivy.uix.label import Label
 from kivy.uix.popup import Popup
 from kivy.uix.textinput import TextInput
 from kivy.properties import StringProperty, NumericProperty
@@ -36,6 +37,9 @@ from parse_rest.connection import register, ParseBatcher
 from parse_rest.datatypes import Object
 from parse_rest.user import User
 
+from kivy.core.window import Window
+
+Window.set_icon("oros.png")
 
 #parse initialization
 register("D75yTmAfqHv8Zblpvq3vQ8Nb68RTq8yCJhynyIt1", "ce28KxuesyTf2X3pxzkyHj2QZfSuWRwo9c2NjuQv")
@@ -87,10 +91,13 @@ class Login(AnchorLayout):
     nickname = ObjectProperty()
     message = ObjectProperty()
 
-class Menu(BoxLayout):
+class Principal(BoxLayout):
     lst_partidas = ObjectProperty()
 
 class Game(BoxLayout):
+    pass
+
+class ChatMsg(Label):
     pass
 
 class Conquian(FloatLayout):
@@ -113,66 +120,8 @@ class Conquian(FloatLayout):
     
     def __init__(self, **kwargs):
         super(Conquian, self).__init__(**kwargs)
-        
 
         self.puntos = 0
-        
-        #cargar id de dispositivo
-        try:
-            self.devID = open('devID').read()
-        except:
-            self.devID = '-1'
-            
-        self.server = 'http://www.devsinc.com.mx'
-
-
-        '''
-        Request(action=self.server + '/conquian/signin.php', 
-                    callback=self.on_sign, 
-                    data=urllib.urlencode({'devID':self.devID})
-                    )
-        '''
-        
-    def on_sign(self, res):
-        
-        print 'Sign response: ', res
-        
-        self.res = res
-        Clock.schedule_once(self.on_res, 0)
-        
-        
-        
-        
-    def on_res(self, dt):
-        
-        self.points = rotatingPoints()
-        self.add_widget(self.points)
-        
-        if 'SIGNUP_OK' in self.res:
-            p = alert('Welcome', 'Bienvenido al conquian online')
-            p.bind(on_dismiss=self.create_gui)
-            
-            self.devID = self.res.split(' ')[1]
-            self.puntos = 100
-            
-            
-            #guardar id de dispositivo
-            open('devID', 'w').write(self.devID)
-            
-            
-            self.nick = 'conquianplayer' + self.devID
-            
-            
-        elif 'SIGNIN_OK' in self.res:
-            
-            self.create_gui()
-            
-            tkns = self.res.split(' ')
-            
-            self.nick = tkns[1]
-            self.puntos = int(tkns[2])
-            self.txt_puntos.text = 'Puntos: ' + str(self.puntos)
-            
         
     def on_nick(self, w, val):
         if hasattr(self, 'nickname'):
@@ -243,25 +192,7 @@ class Conquian(FloatLayout):
         #crear tarjetas
         self.create_cards()
         
-        
-    def on_devices(self, val):
-        print '---------DEVICES'
-        print val
-        
-        self.devices = json.loads(val)
-        
-        for dev in sorted(self.devices):
-            print dev
-            print self.devices[dev]['devID']
-            print self.devices[dev]['lu']
-            
-            self.people.add_item(text=dev)
-        
-    def on_nickenter(self, w):
-        print 'enter'
-        
-    def save_nickname(self):
-        pass
+
         
     def create_cards(self, dt=None):
         #guardaremos las cartas en un diccionario
@@ -291,87 +222,7 @@ class Conquian(FloatLayout):
         if self.curcarta < len(self.scartas)-1:
             self.curcarta += 1
             Clock.schedule_once(self.next_card, .3)
-        
-        
-    def on_jugar(self, w):
-        
-        #ocultar controles
-        self.hide_controls()
-                
-        self.lb_centered = Label(text='Solicitando unirse al juego')
-        self.add_widget(self.lb_centered)
 
-        #hacer peticion de juego
-        Request(action=self.server + '/conquian/start_game.php', 
-                    callback=self.res_jugar, 
-                    data=urllib.urlencode({'devID':self.devID})
-                    )
-                    
-    def res_jugar(self, res):
-        print res
-        
-        r = json.loads(res)
-        
-        #guardar el numero de partida
-        self.npartida = str(r['partID'])
-        
-        self.lb_centered.text += '\nPartida numero: ' + self.npartida
-        
-        if r['player1ID'] != '0' and r['player1ID'] != self.devID:
-            self.lb_centered.text += '\nJugador 1: ' + r['player1ID']
-            
-        elif r['player2ID'] != '0' and r['player2ID'] != self.devID:
-            self.lb_centered.text += '\nJugador 2: ' + r['player2ID']
-            
-        elif r['player3ID'] != '0' and r['player3ID'] != self.devID:
-            self.lb_centered.text += '\nJugador 3: ' + r['player3ID']
-            
-        elif r['player4ID'] != '0' and r['player4ID'] != self.devID:
-            self.lb_centered.text += '\nJugador 4: ' + r['player4ID']
-        
-        self.btn_iniciarpartida = Button(text='Iniciar partida', 
-                                        size_int=(None,None), 
-                                        size=(300,80),
-                                        )
-        
-                    
-    def on_crearpartida(self, w):
-        self.pop_crearpartida = CrearPartida()
-        self.pop_crearpartida.btn_aceptar.bind(on_press=self.on_realcrearpartida)
-        self.pop_crearpartida.open()
-        
-        #hacer el request al servidor
-        Request(action=self.server + '/conquian/create_game.php', 
-                    callback=self.res_crearpartida, 
-                    data=urllib.urlencode({'devID':self.devID,
-                                            'apuesta':self.pop_crearpartida.txt_apuesta.text})
-                    )
-                    
-    def on_realcrearpartida(self, w):
-    
-        #ocultar controles
-        self.hide_controls()
-                
-        self.lb_centered = Label(text='Creando partida')
-        self.add_widget(self.lb_centered)
-        
-        #cerrar dialogo de crear partida
-        self.pop_crearpartida.dismiss()
-
-        #hacer el request al servidor
-        Request(action=self.server + '/conquian/create_game.php', 
-                    callback=self.res_crearpartida, 
-                    data=urllib.urlencode({'devID':self.devID,
-                                            'apuesta':self.pop_crearpartida.txt_apuesta.text})
-                    )
-                    
-    def res_crearpartida(self, res):
-                
-        self.lb_centered.text += '\nPartida numero: ' + res + '\nEsperando jugadores'
-        
-        #guardar el numero de partida
-        self.npartida = int(res)
-        
 
     def hide_controls(self):
         self.remove_widget(self.lay_cards)
@@ -383,42 +234,61 @@ class Conquian(FloatLayout):
     def do_login(self):
         print 'login'
 
+
         try:
-            usr = User.signup(self.login.nickname.text, "12345", nickname=self.login.nickname.text)
+            self.user = User.signup(self.login.nickname.text, "12345", nickname=self.login.nickname.text)
             self.remove_widget(self.login)
 
-            self.menu = Menu()
-            self.add_widget(self.menu)
+            self.main = Principal()
+            self.add_widget(self.main)
 
-            #self.getpartidas = PartidasThread(callback=self.actualizar_partidas)
-            #self.getpartidas.start()
+            print "Loged"
+
+            self.getpartidas = PartidasThread(callback=self.actualizar_partidas)
+            self.getpartidas.start()
 
         except:
             self.login.message.text = 'Nickname already in use'
+            print "Algo salio mal"
+
+    def postMessage(self, msgtext):
+        print msgtext.text
+
+        msg = Chat()
+        msg.Message = msgtext.text
+        msg.PUser = self.user
+        msg.save()
+
+        print self.main.chat.messages.add_widget(ChatMsg(text=msgtext.text) )
+
+        msgtext.text = ""
+        msgtext.focus = True
 
     def crear_partida(self):
 
-        mypartidas = Partidas.Query.filter(Creator__in=[self.login.nickname.text])
+        mypartidas = Partidas.Query.filter(Creator__in=[self.user])
 
         if len(mypartidas) > 0:
-            print "YA hay partida creada"
+            print "Ya hay partida creada"
             return
 
         partida = Partidas()
-        partida.Creator = self.login.nickname.text
+        partida.Creator = self.user
         partida.save()
 
         #self.actualizar_partidas()
 
     def actualizar_partidas(self, partidas, dt):
-        self.menu.lst_partidas.clear()
+        self.main.lst_partidas.clear()
+
+        #print partidas
 
         #partidas = Partidas.Query.all()
 
         for i in partidas:
             print i
-            label = Label(text=i.Creator, height=40)
-            self.menu.lst_partidas.add_widget(label)
+            label = Label(text=i.Creator.nickname, height=40)
+            self.main.lst_partidas.add_widget(label)
 
 
 
@@ -451,7 +321,7 @@ if __name__ == '__main__':
         def build(self):
             return Conquian()
 
-    conquian = ConquianApp()
-    conquian.run()
-    conquian.root.getpartidas.stop = True
+    app = ConquianApp()
+    app.run()
+    app.root.getpartidas.stop = True
     
