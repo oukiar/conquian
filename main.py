@@ -100,6 +100,9 @@ class Game(BoxLayout):
 class ChatMsg(Label):
     pass
 
+class Lobby(BoxLayout):
+    pass
+
 class Conquian(FloatLayout):
     
     '''
@@ -239,7 +242,7 @@ class Conquian(FloatLayout):
             self.user = User.signup(self.login.nickname.text, "12345", nickname=self.login.nickname.text)
             self.remove_widget(self.login)
 
-            self.main = Principal()
+            self.main = Lobby()
             self.add_widget(self.main)
 
             print "Loged"
