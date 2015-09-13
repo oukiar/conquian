@@ -100,8 +100,34 @@ class Game(BoxLayout):
 class ChatMsg(Label):
     pass
 
+class GameSelector(BoxLayout):
+    def init_game(self):
+        #search games
+        print Partidas.Query.all().filter(Status_eq="Ready")
+    
+class CreateGame(Popup):
+    def do_game(self):
+        
+        self.user = User.signup("nobody" + str(len(User.Query.all())).zfill(4), "012345679", nickname="nobody0001")
+        self.dismiss()
+        
+        
+        self.partida = Partidas()
+        self.partida.Creator = self.user
+        self.partida.Gametag = self.gametag.text
+        self.partida.Status = "Ready"
+        self.partida.save()
+        
+        app.root.games = GameSelector()
+        app.root.add_widget(app.root.games)
+        
+
 class Lobby(BoxLayout):
-    pass
+    def crear_juego(self):
+        app.root.remove_widget(app.root.lobby)
+        
+        CreateGame().open()
+        
 
 class Conquian(FloatLayout):
     

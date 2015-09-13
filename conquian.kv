@@ -121,20 +121,107 @@
                 on_press: app.root.do_login()
                 border: (10,10,10,10)
 
+
+<GameItem@Bubble>:
+    size_hint_y: None
+    BoxLayout:
+        padding: 20
+        Image:
+            source: "profile.jpg"
+        BoxLayout:
+            orientation: "vertical"
+            Label:
+                text: "Created by:"
+            Label:
+                text: "Gametag: mygame"
+            Button:
+                text: "Join"
+
+<GameSelector>:
+    orientation: "vertical"
+    padding: (200,50)
+    
+    canvas.before:
+        Rectangle:
+            pos: self.pos
+            size: self.size
+            source: "backgroundblocks.jpg"
+            
+    Button:
+        size_hint_y: None
+        background_normal: "cH87Z.png"
+        background_down: "cH87Z_press.png"
+        text: "Iniciar juego"
+        on_release: root.init_game()
+    ScrollBox:
+        orientation: "vertical"
+        spacing: 20
+        GameItem:
+        GameItem:
+        GameItem:
+        GameItem:
+    
+    
+<CreateGame>:
+    title: "Creating a new game"
+    size_hint: (None, None)
+    size: (400,250)
+    gametag:gametag
+    BoxLayout:
+        orientation: "vertical"
+        Label:
+            text: "Game tag"
+        TextInput:
+            hint_text: "This will help you to get recognized partida"
+            id: gametag
+        Button:
+            size_hint_y: None
+            background_normal: "cH87Z.png"
+            background_down: "cH87Z_press.png"
+            text: "OK"
+            on_press: root.do_game()
+            
 <Lobby>:
+    orientation: "vertical"
+    padding: (200,100)
     Button:
+        background_normal: "cH87Z.png"
+        background_down: "cH87Z_press.png"
         text: "Iniciar sesion"
+        font_size: 32
     Button:
+        background_normal: "cH87Z.png"
+        background_down: "cH87Z_press.png"
         text: "Jugar"
-        on_press: root.init_game()
+        font_size: 32
     Button:
+        background_normal: "cH87Z.png"
+        background_down: "cH87Z_press.png"
         text: "Crear juego"
+        on_release: root.crear_juego()
+        font_size: 32
     Button:
+        background_normal: "cH87Z.png"
+        background_down: "cH87Z_press.png"
         text: "Estadisticas - Records"
+        on_release: root.crear_juego()
+        font_size: 32
     Button:
-        text: "opciones"
+        background_normal: "cH87Z.png"
+        background_down: "cH87Z_press.png"
+        text: "Opciones"
+        on_release: root.crear_juego()
+        font_size: 32
 
 <Conquian>:
+    lobby:lobby
+    Image:
+        opacity: .5
+        source: "background.jpg"
+    Lobby:
+        id: lobby
+
+<OldConquian>:
     login: login
     Image:
         opacity: .5
