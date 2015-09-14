@@ -17,7 +17,7 @@ from kivy.uix.popup import Popup
 from kivy.uix.textinput import TextInput
 from kivy.properties import StringProperty, NumericProperty
 from kivy.uix.popup import Popup
-
+from kivy.uix.bubble import Bubble
 
 import os
 
@@ -100,27 +100,52 @@ class Game(BoxLayout):
 class ChatMsg(Label):
     pass
 
+class GameItem(Bubble):
+    pass
+
 class GameSelector(BoxLayout):
     def init_game(self):
         #search games
         print Partidas.Query.all().filter(Status_eq="Ready")
+
+
     
 class CreateGame(Popup):
     def do_game(self):
-        
-        self.user = User.signup("nobody" + str(len(User.Query.all())).zfill(4), "012345679", nickname="nobody0001")
+
+        nick = "nobody" + str(len(User.Query.all())).zfill(4)
+        app.root.user = User.signup(nick, "012345679", nickname=nick)
         self.dismiss()
         
         
         self.partida = Partidas()
-        self.partida.Creator = self.user
+        self.partida.Creator = app.root.user
         self.partida.Gametag = self.gametag.text
         self.partida.Status = "Ready"
         self.partida.save()
+
+        #remove old timeoff games waiting
         
+
         app.root.games = GameSelector()
         app.root.add_widget(app.root.games)
-        
+
+        app.root.gamelist = Partidas.Query.all().order_by("-createdAt")
+
+        #games list
+        for i in app.root.gamelist:
+            game = GameItem()
+
+
+            game.by.text = i.Creator.nickname
+            game.gametag.text = i.Gametag
+
+
+            if i.Creator.nickname == nick:
+                game.btn_action.text = "Cancel game"
+
+            app.root.games.gamelist.add_widget(game)
+
 
 class Lobby(BoxLayout):
     def crear_juego(self):
@@ -352,5 +377,5 @@ if __name__ == '__main__':
 
     app = ConquianApp()
     app.run()
-    app.root.getpartidas.stop = True
+    #app.root.getpartidas.stop = True
     

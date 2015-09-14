@@ -122,24 +122,34 @@
                 border: (10,10,10,10)
 
 
-<GameItem@Bubble>:
+<GameItem>:
     size_hint_y: None
+    height: 150
+    by:by
+    gametag:gametag
+    btn_action:btn_action
     BoxLayout:
         padding: 20
+        spacing: 5
         Image:
+            size_hint_x: None
             source: "profile.jpg"
         BoxLayout:
             orientation: "vertical"
             Label:
                 text: "Created by:"
+                id: by
             Label:
                 text: "Gametag: mygame"
+                id: gametag
             Button:
                 text: "Join"
+                id: btn_action
 
 <GameSelector>:
     orientation: "vertical"
     padding: (200,50)
+    gamelist:gamelist
     
     canvas.before:
         Rectangle:
@@ -153,14 +163,14 @@
         background_down: "cH87Z_press.png"
         text: "Iniciar juego"
         on_release: root.init_game()
+
+
     ScrollBox:
+        id: gamelist
         orientation: "vertical"
         spacing: 20
-        GameItem:
-        GameItem:
-        GameItem:
-        GameItem:
-    
+
+
     
 <CreateGame>:
     title: "Creating a new game"
@@ -221,6 +231,12 @@
     Lobby:
         id: lobby
 
+    Loading:
+        source: 'loading_sacredgeometry.png'
+        duration: 3
+        pos_z: -200
+        opacity: 1
+
 <OldConquian>:
     login: login
     Image:
@@ -230,8 +246,3 @@
         id: login
 
 
-    Loading:
-        source: 'oros48.png'
-        duration: 3
-        pos_z: -200
-        opacity: 0
