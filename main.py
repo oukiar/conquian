@@ -101,7 +101,8 @@ class ChatMsg(Label):
     pass
 
 class GameItem(Bubble):
-    pass
+    def do_action(self):
+        print self.btn_action.text
 
 class GameSelector(BoxLayout):
     def init_game(self):
@@ -124,6 +125,7 @@ class CreateGame(Popup):
         self.partida.Status = "Ready"
         self.partida.save()
 
+        '''
         #remove old timeoff games waiting
         now = datetime.now()
         lastmins = now - timedelta(minutes=3)
@@ -137,7 +139,8 @@ class CreateGame(Popup):
         
         batcher = ParseBatcher()
         batcher.batch_delete(partidas)
-        
+        '''
+
         #crear selector de juego
         app.root.games = GameSelector()
         app.root.add_widget(app.root.games)
@@ -157,6 +160,7 @@ class CreateGame(Popup):
                 game.btn_action.text = "Cancel game"
 
             app.root.games.gamelist.add_widget(game)
+
 
 
 class Lobby(BoxLayout):
