@@ -20,7 +20,7 @@ from kivy.uix.popup import Popup
 from kivy.uix.bubble import Bubble
 
 import os
-
+from datetime import date, datetime, time, timedelta
 
 import json
 
@@ -125,8 +125,20 @@ class CreateGame(Popup):
         self.partida.save()
 
         #remove old timeoff games waiting
+        now = datetime.now()
+        lastmins = now - timedelta(minutes=3)
         
+        print "Now: ", now
+        print "Mins: ", lastmins
 
+        partidas = Partidas.Query.filter(createdAt__lte=lastmins)
+        
+        print partidas
+        
+        batcher = ParseBatcher()
+        batcher.batch_delete(partidas)
+        
+        #crear selector de juego
         app.root.games = GameSelector()
         app.root.add_widget(app.root.games)
 
