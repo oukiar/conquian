@@ -1,0 +1,249 @@
+
+
+#:import ScrollBox devslib.scrollbox
+#:import Loading devslib.widget3D
+
+<Game>:
+    BoxLayout:
+        size_hint_y: None
+        Button:
+            text: "Abandonar juego"
+        Button:
+            text: "Ofrecer tablas"
+
+        Button:
+            text: "Pagar por ver"
+
+<CharMsg>:
+    text_size: root.width, None
+    size: self.texture_size
+
+<Chat@AccordionItem>:
+    messages:messages
+    title: "Chat"
+    BoxLayout:
+        orientation: "vertical"
+        ScrollBox:
+            id: messages
+            orientation: "vertical"
+        TextInput:
+            text: ""
+            size_hint_y: None
+            height: 50
+            hint_text: "Write message"
+            multiline: False
+            on_text_validate: app.root.postMessage(self)
+
+<Principal>:
+    lst_partidas:lst_partidas
+    chat:chat
+    Bubble:
+        size_hint_x: None
+        width: 200
+        Accordion:
+            orientation: "vertical"
+            AccordionItem:
+                title: "Partidas"
+                collapse: True
+                BoxLayout:
+                    orientation: 'vertical'
+                    padding: 10
+                    spacing: 10
+                    Button:
+                        text: "Iniciar juego"
+                        border: (10,10,10,10)
+                        size_hint_y: None
+                    Button:
+                        text: "Crear partida"
+                        size_hint_y: None
+                        on_press: app.root.crear_partida()
+                    Label:
+                        text: "Partidas disponibles"
+                        size_hint_y: None
+                        height: 40
+                    ScrollBox:
+                        id: lst_partidas
+                        orientation: 'vertical'
+                        canvas.before:
+                            Color:
+                                rgba: (.9, 0.9, 0.9, .5)
+                            Rectangle:
+                                pos: self.pos
+                                size: self.size
+
+            Chat:
+                id: chat
+            AccordionItem:
+                title: "Comunidad"
+
+    Game:
+
+<Login>:
+    nickname: nickname
+    message: message
+    anchor_y: 'center'
+    anchor_x: 'center'
+    Bubble:
+        size_hint: (None,None)
+        size: (400,350)
+        background_color: (1,1,1,.5)
+    BoxLayout:
+        nickname: nickname
+        orientation: "vertical"
+        size_hint: (None,None)
+        size: (400,350)
+        padding: 20
+        spacing: 15
+        Label:
+            text: "Nickname"
+            font_size: 20
+        TextInput:
+            id: nickname
+            size_hint_y: None
+            height: 40
+        Label:
+            id: message
+            text: ""
+            size_hint_y: None
+            height: 40
+            color: (1,.2,.2,1)
+        AnchorLayout:
+            anchor_x: 'center'
+
+            Button:
+                background_normal: 'blank.jpg'
+                background_color: (.8,.8,1,1)
+                background_down: 'blank.jpg'
+                color: (0,0,0, 1)
+                text: 'Entrar'
+                size_hint_x: None
+                width: 200
+                on_press: app.root.do_login()
+                border: (10,10,10,10)
+
+
+<GameItem>:
+    size_hint_y: None
+    height: 150
+    by:by
+    gametag:gametag
+    btn_action:btn_action
+    BoxLayout:
+        padding: 20
+        spacing: 5
+        Image:
+            size_hint_x: None
+            source: "profile.jpg"
+        BoxLayout:
+            orientation: "vertical"
+            Label:
+                text: "Created by:"
+                id: by
+            Label:
+                text: "Gametag: mygame"
+                id: gametag
+            Button:
+                text: "Join"
+                id: btn_action
+                on_release: root.do_action()
+
+<GameSelector>:
+    orientation: "vertical"
+    padding: (200,50)
+    gamelist:gamelist
+    
+    canvas.before:
+        Rectangle:
+            pos: self.pos
+            size: self.size
+            source: "backgroundblocks.jpg"
+            
+    Button:
+        size_hint_y: None
+        background_normal: "cH87Z.png"
+        background_down: "cH87Z_press.png"
+        text: "Iniciar juego"
+        on_release: root.init_game()
+
+
+    ScrollBox:
+        id: gamelist
+        orientation: "vertical"
+        spacing: 20
+
+
+    
+<CreateGame>:
+    title: "Creating a new game"
+    size_hint: (None, None)
+    size: (400,250)
+    gametag:gametag
+    BoxLayout:
+        orientation: "vertical"
+        Label:
+            text: "Game tag"
+        TextInput:
+            hint_text: "This will help you to get recognized partida"
+            id: gametag
+        Button:
+            size_hint_y: None
+            background_normal: "cH87Z.png"
+            background_down: "cH87Z_press.png"
+            text: "OK"
+            on_press: root.do_game()
+            
+<Lobby>:
+    orientation: "vertical"
+    padding: (200,100)
+    Button:
+        background_normal: "cH87Z.png"
+        background_down: "cH87Z_press.png"
+        text: "Iniciar sesion"
+        font_size: 32
+    Button:
+        background_normal: "cH87Z.png"
+        background_down: "cH87Z_press.png"
+        text: "Jugar"
+        font_size: 32
+    Button:
+        background_normal: "cH87Z.png"
+        background_down: "cH87Z_press.png"
+        text: "Crear juego"
+        on_release: root.crear_juego()
+        font_size: 32
+    Button:
+        background_normal: "cH87Z.png"
+        background_down: "cH87Z_press.png"
+        text: "Estadisticas - Records"
+        on_release: root.crear_juego()
+        font_size: 32
+    Button:
+        background_normal: "cH87Z.png"
+        background_down: "cH87Z_press.png"
+        text: "Opciones"
+        on_release: root.crear_juego()
+        font_size: 32
+
+<Conquian>:
+    lobby:lobby
+    Image:
+        opacity: .5
+        source: "background.jpg"
+    Lobby:
+        id: lobby
+
+    #Loading:
+        #source: 'newloading.png'
+        #duration: 3
+        #pos_z: -200
+        #opacity: 1
+
+<OldConquian>:
+    login: login
+    Image:
+        opacity: .5
+        source: "background.jpg"
+    Login:
+        id: login
+
+

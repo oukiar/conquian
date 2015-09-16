@@ -1,0 +1,34 @@
+
+
+#:import ScrollBox devslib.scrollbox
+#:import Loading devslib.widget3D
+
+<ChatMsg>:
+    text_size: root.width, None
+    size: self.texture_size
+
+<Chat>:
+    messages:messages
+    title: "Chat"
+
+    color: (1,1,1,1)
+
+    canvas.before:
+        Color:
+            rgba: .3, .3, 1, 1
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+    BoxLayout:
+        orientation: "vertical"
+        ScrollBox:
+            id: messages
+            orientation: "vertical"
+        TextInput:
+            text: ""
+            size_hint_y: None
+            height: 50
+            hint_text: "Write message"
+            multiline: False
+            on_text_validate: app.root.postMessage(self)
