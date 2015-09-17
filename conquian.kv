@@ -121,6 +121,26 @@
                 on_press: app.root.do_login()
                 border: (10,10,10,10)
 
+<WaitingGame>:
+    FloatLayout:
+
+        BoxLayout:
+            size_hint_y: None
+            orientation: "vertical"
+            Label:
+                font_size: 25
+                text: "Esperando inicio de juego"
+            Label:
+                font_size: 25
+                text: "Juego: "
+            Label:
+                font_size: 25
+                text: "Players: "
+        Loading:
+            source: 'rotating.png'
+            duration: 3
+            pos_z: -200
+            opacity: 1
 
 <GameItem>:
     size_hint_y: None
@@ -205,6 +225,7 @@
         background_down: "cH87Z_press.png"
         text: "Jugar"
         font_size: 32
+        on_release: root.on_jugar()
     Button:
         background_normal: "cH87Z.png"
         background_down: "cH87Z_press.png"
@@ -232,11 +253,6 @@
     Lobby:
         id: lobby
 
-    #Loading:
-        #source: 'newloading.png'
-        #duration: 3
-        #pos_z: -200
-        #opacity: 1
 
 <OldConquian>:
     login: login

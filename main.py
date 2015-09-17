@@ -39,7 +39,7 @@ from parse_rest.user import User
 
 from kivy.core.window import Window
 
-Window.set_icon("oros.png")
+Window.set_icon("icon.png")
 
 #parse initialization
 register("D75yTmAfqHv8Zblpvq3vQ8Nb68RTq8yCJhynyIt1", "ce28KxuesyTf2X3pxzkyHj2QZfSuWRwo9c2NjuQv")
@@ -69,6 +69,8 @@ class PartidasThread(Thread):
              partidas = Partidas.Query.all()
              Clock.schedule_once(partial(self.callback, partidas), 0)
 
+class GameInitThread(Thread):
+    pass
 
 class CrearPartida(Popup):
     
@@ -94,6 +96,9 @@ class Login(AnchorLayout):
 class Principal(BoxLayout):
     lst_partidas = ObjectProperty()
 
+class WaitingGame(Popup):
+    pass
+
 class Game(BoxLayout):
     pass
 
@@ -103,6 +108,11 @@ class ChatMsg(Label):
 class GameItem(Bubble):
     def do_action(self):
         print self.btn_action.text
+
+        if self.btn_action.text == "Cancel game":
+            pass
+        else:
+            WaitingGame().open()
 
 class GameSelector(BoxLayout):
     def init_game(self):
@@ -114,8 +124,12 @@ class GameSelector(BoxLayout):
 class CreateGame(Popup):
     def do_game(self):
 
-        nick = "nobody" + str(len(User.Query.all())).zfill(4)
-        app.root.user = User.signup(nick, "012345679", nickname=nick)
+        if app.root.user == None:
+            nick = "nobody" + str(len(User.Query.all())).zfill(4)
+            app.root.user = User.signup(nick, "012345679", nickname=nick)
+        else:
+            nick = app.root.user.nickname
+
         self.dismiss()
         
         
@@ -124,6 +138,10 @@ class CreateGame(Popup):
         self.partida.Gametag = self.gametag.text
         self.partida.Status = "Ready"
         self.partida.save()
+
+        WaitingGame().open()
+
+        return
 
         '''
         #remove old timeoff games waiting
@@ -140,6 +158,26 @@ class CreateGame(Popup):
         batcher = ParseBatcher()
         batcher.batch_delete(partidas)
         '''
+
+
+
+
+
+class Lobby(BoxLayout):
+    def crear_juego(self):
+        app.root.remove_widget(app.root.lobby)
+        
+        CreateGame().open()
+
+    def on_jugar(self):
+
+        if app.root.user == None:
+            nick = "nobody" + str(len(User.Query.all())).zfill(4)
+            app.root.user = User.signup(nick, "012345679", nickname=nick)
+        else:
+            nick = app.root.user.nickname
+
+        app.root.remove_widget(app.root.lobby)
 
         #crear selector de juego
         app.root.games = GameSelector()
@@ -160,15 +198,6 @@ class CreateGame(Popup):
                 game.btn_action.text = "Cancel game"
 
             app.root.games.gamelist.add_widget(game)
-
-
-
-class Lobby(BoxLayout):
-    def crear_juego(self):
-        app.root.remove_widget(app.root.lobby)
-        
-        CreateGame().open()
-        
 
 class Conquian(FloatLayout):
     
@@ -191,6 +220,7 @@ class Conquian(FloatLayout):
     def __init__(self, **kwargs):
         super(Conquian, self).__init__(**kwargs)
 
+        self.user = None
         self.puntos = 0
         
     def on_nick(self, w, val):
