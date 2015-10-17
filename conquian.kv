@@ -3,16 +3,6 @@
 #:import ScrollBox devslib.scrollbox
 #:import Loading devslib.widget3D
 
-<Game>:
-    BoxLayout:
-        size_hint_y: None
-        Button:
-            text: "Abandonar juego"
-        Button:
-            text: "Ofrecer tablas"
-
-        Button:
-            text: "Pagar por ver"
 
 <CharMsg>:
     text_size: root.width, None
@@ -121,6 +111,90 @@
                 on_press: app.root.do_login()
                 border: (10,10,10,10)
 
+<Game>:
+    players:players
+    mazo:mazo
+    residuo: residuo
+    RelativeLayout:
+
+        BoxLayout:
+            orientation: "vertical"
+
+            BoxLayout:
+                id: players
+
+            BoxLayout:
+
+                ImageButton:
+                    id: mazo
+                    source: "rotating.png"
+
+                ImageButton:
+                    id: residuo
+                    source: "rotating.png"
+
+            BoxLayout:
+
+                BoxLayout:
+                    ImageButton:
+                        size_hint: (None,None)
+                        height: 80
+                        source: "rotating.png"
+                    ImageButton:
+                        size_hint: (None,None)
+                        height: 80
+                        source: "rotating.png"
+                    ImageButton:
+                        size_hint: (None,None)
+                        height: 80
+                        source: "rotating.png"
+                BoxLayout:
+                    ImageButton:
+                        size_hint: (None,None)
+                        height: 80
+                        source: "rotating.png"
+                    ImageButton:
+                        size_hint: (None,None)
+                        height: 80
+                        source: "rotating.png"
+                    ImageButton:
+                        size_hint: (None,None)
+                        height: 80
+                        source: "rotating.png"
+                BoxLayout:
+                    ImageButton:
+                        size_hint: (None,None)
+                        height: 80
+                        source: "rotating.png"
+                    ImageButton:
+                        size_hint: (None,None)
+                        height: 80
+                        source: "rotating.png"
+                    ImageButton:
+                        size_hint: (None,None)
+                        height: 80
+                        source: "rotating.png"
+
+            BoxLayout:
+                spacing: 10
+                id: cards
+                ImageButton:
+                    source: "rotating.png"
+                ImageButton:
+                    source: "rotating.png"
+                ImageButton:
+                    source: "rotating.png"
+                ImageButton:
+                    source: "rotating.png"
+                ImageButton:
+                    source: "rotating.png"
+                ImageButton:
+                    source: "rotating.png"
+                ImageButton:
+                    source: "rotating.png"
+                ImageButton:
+                    source: "rotating.png"
+
 <WaitingGame>:
     FloatLayout:
 
@@ -215,6 +289,12 @@
 <Lobby>:
     orientation: "vertical"
     padding: (200,100)
+    Button:
+        background_normal: "cH87Z.png"
+        background_down: "cH87Z_press.png"
+        text: "vs CPU"
+        font_size: 32
+        on_release: root.on_init_ai_game()
     Button:
         background_normal: "cH87Z.png"
         background_down: "cH87Z_press.png"

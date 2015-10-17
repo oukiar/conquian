@@ -8,6 +8,7 @@ Lista de partidas activas y en progreso
 '''
 
 from kivy.uix.floatlayout import FloatLayout
+from kivy.uix.relativelayout import RelativeLayout
 from kivy.uix.anchorlayout import AnchorLayout
 from kivy.uix.scatter import Scatter
 from kivy.uix.image import Image
@@ -114,6 +115,10 @@ class GameItem(Bubble):
         else:
             WaitingGame().open()
 
+            #join this user to the partida
+
+
+
 class GameSelector(BoxLayout):
     def init_game(self):
         #search games
@@ -161,7 +166,8 @@ class CreateGame(Popup):
 
 
 
-
+class Game(Popup):
+    pass
 
 class Lobby(BoxLayout):
     def crear_juego(self):
@@ -169,7 +175,18 @@ class Lobby(BoxLayout):
         
         CreateGame().open()
 
+    def on_init_ai_game(self):
+        '''
+        Start game versus cpu, Inteligence artificial
+        '''
+        print "vs CPU !"
+
+
+        Game().open()
+
     def on_jugar(self):
+
+        print "ON_JUGAR"
 
         if app.root.user == None:
             nick = "nobody" + str(len(User.Query.all())).zfill(4)
@@ -200,11 +217,11 @@ class Lobby(BoxLayout):
             app.root.games.gamelist.add_widget(game)
 
 class Conquian(FloatLayout):
-    
+
     '''
     Los dispositivos pueden estar en estado
     de espera, solicitando partida,
-    
+
     Los dispositivos pueden mandarse requests de
     solicitud de partida.
     
