@@ -25,14 +25,6 @@ from datetime import date, datetime, time, timedelta
 
 import json
 
-try:
-    import devslib.cloud as cloud
-except:
-    import os
-    os.system("git clone https://github.com/oukiar/devslib")
-    
-    import devslib.cloud as cloud
-
 from devslib.widget3D import Widget3D, Image3D, rotatingPoints
 
 from devslib.utils import *
